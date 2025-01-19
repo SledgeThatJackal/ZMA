@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/ZipFragment">
+
+    <fragment
+        android:id="@+id/ZipFragment"
+        android:name="dev.adamico.zma.ZipFragment"
+        android:label="@string/zip_fragment_label"
+        tools:layout="@layout/zip">
+
+        <action
+            android:id="@+id/action_ZipFragment_to_CreateFragment"
+            app:destination="@id/CreateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/CreateFragment"
+        android:name="dev.adamico.zma.CreateFragment"
+        android:label="@string/create_fragment_label"
+        tools:layout="@layout/create">
+
+        <action
+            android:id="@+id/action_CreateFragment_to_ZipFragment"
+            app:destination="@id/ZipFragment" />
+    </fragment>
+</navigation>

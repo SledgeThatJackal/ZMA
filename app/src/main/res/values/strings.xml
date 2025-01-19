@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ZMA</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="zip_fragment_label">Zip Fragment</string>
+    <string name="create_fragment_label">Create Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+
+    <string name="create">Create</string>
+    <string name="create_fab_description">A button to create a new folder in the zip file</string>
+    <string name="barcode_input_hint">Enter Barcode ID here</string>
+</resources>

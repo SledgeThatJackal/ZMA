@@ -1,5 +1,6 @@
 package dev.adamico.zma;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,10 +26,13 @@ public class ZipFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.fabAdd.setOnClickListener(v ->
-                NavHostFragment.findNavController(ZipFragment.this)
-                        .navigate(R.id.action_ZipFragment_to_CreateFragment)
-        );
+//        NavHostFragment.findNavController(ZipFragment.this)
+//                .navigate(R.id.action_ZipFragment_to_CreateFragment)
+
+        binding.fabAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), CameraActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override

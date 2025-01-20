@@ -13,10 +13,10 @@
 
         <action
             android:id="@+id/action_ZipFragment_to_CreateFragment"
-            app:destination="@id/CreateFragment" />
+            app:destination="@id/CameraFragment" />
     </fragment>
     <fragment
-        android:id="@+id/CreateFragment"
+        android:id="@+id/CameraFragment"
         android:name="dev.adamico.zma.CreateFragment"
         android:label="@string/create_fragment_label"
         tools:layout="@layout/create">

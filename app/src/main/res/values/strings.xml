@@ -12,4 +12,6 @@
     <string name="create">Create</string>
     <string name="create_fab_description">A button to create a new folder in the zip file</string>
     <string name="barcode_input_hint">Enter Barcode ID here</string>
+    <string name="barcode_instructions_label">Select one of the options to add a barcode ID</string>
+    <string name="capture">Capture</string>
 </resources>

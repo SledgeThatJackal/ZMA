@@ -1,24 +1,41 @@
 package dev.adamico.zma;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
-import dev.adamico.zma.databinding.ZipBinding;
+import java.io.File;
+import java.util.List;
+
+import dev.adamico.zma.databinding.FragmentZipBinding;
 
 public class ZipFragment extends Fragment {
-    private ZipBinding binding;
+    private FragmentZipBinding binding;
+
+    private TextView foldersView;
+    private Button addMoreButton;
+    private Button createButton;
+
+    private FileViewModel fileViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = ZipBinding.inflate(inflater, container, false);
+        binding = FragmentZipBinding.inflate(inflater, container, false);
+
+        foldersView = binding.foldersView;
+        addMoreButton = binding.addMoreButton;
+        createButton = binding.createButton;
 
         return binding.getRoot();
     }
@@ -26,18 +43,45 @@ public class ZipFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        NavHostFragment.findNavController(ZipFragment.this)
-//                .navigate(R.id.action_ZipFragment_to_CreateFragment)
+        fileViewModel = new ViewModelProvider(requireActivity()).get(FileViewModel.class);
+        NavController navController = Navigation.findNavController(requireView());
 
-        binding.fabAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(requireContext(), CameraActivity.class);
-            startActivity(intent);
+        addMoreButton.setOnClickListener(v -> {
+            navController.navigate(R.id.action_zipFragment_to_createFragment);
         });
+
+        createButton.setOnClickListener(v -> {
+            fileViewModel.createZip();
+        });
+
+        setupFolderText();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void setupFolderText(){
+        List<File> folders = fileViewModel.getFolders();
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        folders.forEach(folder -> {
+            File[] files = folder.listFiles();
+
+            stringBuilder.append("Barcode: ").append(folder.getName()).append("\n");
+
+            if(files != null){
+                for(File file: files){
+                    stringBuilder.append(file.getName()).append("\n");
+                }
+
+                stringBuilder.append("\n");
+            }
+        });
+
+        foldersView.setText(stringBuilder);
     }
 }

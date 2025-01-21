@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".BarcodeFragment">
+
+    <com.journeyapps.barcodescanner.BarcodeView
+        android:id="@+id/scannerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+    />
+
+    <TextView
+        android:id="@+id/barcodeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        android:textColor="#F44336"
+        android:textSize="24sp"
+        android:padding="3dp"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <ImageButton
+        android:id="@+id/confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_check"
+        android:contentDescription="@string/confirm"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/barcodeValue"
+        app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <ImageButton
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_cancel"
+        android:contentDescription="@string/wrong"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/barcodeValue"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+    />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".CreateFragment">
+
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/barcode_instructions_label"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
+
+    <TextView
+        android:id="@+id/scannerLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_light"
+        android:textColorLink="@android:color/holo_blue_light"
+        android:clickable="true"
+        android:focusable="true"
+
+        app:layout_constraintTop_toBottomOf="@id/instructions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/instructions"
+        />
+
+    <TextView
+        android:id="@+id/inputLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_blue_light"
+        android:textColorLink="@android:color/holo_blue_light"
+        android:clickable="true"
+        android:focusable="true"
+
+        app:layout_constraintTop_toBottomOf="@id/instructions"
+        app:layout_constraintStart_toStartOf="@id/instructions"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        />
+
+    <TextView
+        android:id="@+id/barcodeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/instructions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+    />
+
+    <Button
+        android:id="@+id/addImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_picture"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+
+        app:layout_constraintTop_toBottomOf="@id/imageNames"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
+
+    <TextView
+        android:id="@+id/imageNames"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+
+        app:layout_constraintTop_toBottomOf="@id/barcodeValue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+    />
+
+    <Button
+        android:id="@+id/doneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+
+        android:text="@string/done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+    />
+
+
+
+    <LinearLayout
+        android:id="@+id/inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/inputLink"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp"
+        android:visibility="gone"
+    >
+        <EditText
+            android:id="@+id/barcodeIdInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/barcode_input_hint"
+            android:autofillHints="@string/barcode_input_hint"
+            android:inputType="text"
+        />
+
+        <ImageButton
+            android:id="@+id/confirmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check"
+            android:contentDescription="@string/confirm"
+            android:background="?android:attr/selectableItemBackground"
+        />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,4 +14,14 @@
     <string name="barcode_input_hint">Enter Barcode ID here</string>
     <string name="barcode_instructions_label">Select one of the options to add a barcode ID</string>
     <string name="capture">Capture</string>
+    <string name="fragment_container">fragment_container</string>
+    <string name="barcode_fragment_label">Scanner</string>
+    <string name="confirmation_fragment_label">Confirmation</string>
+    <string name="camera_fragment_label">Camera</string>
+    <string name="wrong">Wrong</string>
+    <string name="confirm">Confirm</string>
+    <string name="add_picture">Add Picture</string>
+    <string name="done">Done</string>
+    <string name="zip">Zip</string>
+    <string name="add_more">Add More</string>
 </resources>

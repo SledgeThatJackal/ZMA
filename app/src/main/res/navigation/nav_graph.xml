@@ -3,26 +3,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/ZipFragment">
-
+    app:startDestination="@id/createFragment">
     <fragment
-        android:id="@+id/ZipFragment"
-        android:name="dev.adamico.zma.ZipFragment"
-        android:label="@string/zip_fragment_label"
-        tools:layout="@layout/zip">
-
-        <action
-            android:id="@+id/action_ZipFragment_to_CreateFragment"
-            app:destination="@id/CameraFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/CameraFragment"
+        android:id="@+id/createFragment"
         android:name="dev.adamico.zma.CreateFragment"
         android:label="@string/create_fragment_label"
-        tools:layout="@layout/create">
+        tools:layout="@layout/fragment_create"
+    >
 
         <action
-            android:id="@+id/action_CreateFragment_to_ZipFragment"
-            app:destination="@id/ZipFragment" />
+            android:id="@+id/action_createFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment"
+        />
+
+        <action
+            android:id="@+id/action_createFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment"
+        />
+
+        <action
+            android:id="@+id/action_createFragment_to_zipFragment"
+            app:destination="@id/zipFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="dev.adamico.zma.BarcodeFragment"
+        android:label="@string/barcode_fragment_label"
+        tools:layout="@layout/fragment_barcode"
+    >
+        <action
+            android:id="@+id/action_scannerFragment_to_createFragment"
+            app:destination="@id/createFragment"
+        />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="dev.adamico.zma.CameraFragment"
+        android:label="@string/camera_fragment_label"
+        tools:layout="@layout/fragment_camera"
+    >
+
+        <action
+            android:id="@+id/action_cameraFragment_to_createFragment"
+            app:destination="@id/createFragment"
+        />
+    </fragment>
+
+    <fragment
+        android:id="@+id/zipFragment"
+        android:name="dev.adamico.zma.ZipFragment"
+        android:label="@string/zip"
+        tools:layout="@layout/fragment_zip"
+    >
+
+        <action
+            android:id="@+id/action_zipFragment_to_createFragment"
+            app:destination="@id/createFragment" />
     </fragment>
 </navigation>

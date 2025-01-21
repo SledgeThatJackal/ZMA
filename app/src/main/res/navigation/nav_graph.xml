@@ -54,12 +54,27 @@
     <fragment
         android:id="@+id/zipFragment"
         android:name="dev.adamico.zma.ZipFragment"
-        android:label="@string/zip"
+        android:label="@string/zip_fragment_label"
         tools:layout="@layout/fragment_zip"
     >
 
         <action
             android:id="@+id/action_zipFragment_to_createFragment"
+            app:destination="@id/createFragment" />
+        <action
+            android:id="@+id/action_zipFragment_to_requestFragment"
+            app:destination="@id/requestFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/requestFragment"
+        android:name="dev.adamico.zma.RequestFragment"
+        android:label="Save"
+        tools:layout="@layout/fragment_request"
+    >
+
+        <action
+            android:id="@+id/action_requestFragment_to_createFragment"
             app:destination="@id/createFragment" />
     </fragment>
 </navigation>

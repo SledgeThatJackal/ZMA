@@ -3,8 +3,8 @@
     <string name="action_settings">Settings</string>
 
     <!-- Strings used for fragments for navigation -->
-    <string name="zip_fragment_label">Zip Fragment</string>
-    <string name="create_fragment_label">Create Fragment</string>
+    <string name="zip_fragment_label">Zip</string>
+    <string name="create_fragment_label">Create</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
@@ -22,6 +22,9 @@
     <string name="confirm">Confirm</string>
     <string name="add_picture">Add Picture</string>
     <string name="done">Done</string>
-    <string name="zip">Zip</string>
-    <string name="add_more">Add More</string>
+    <string name="add_more">Add New</string>
+    <string name="create_zip">Create Zip</string>
+    <string name="send_to_server">Send to Server</string>
+    <string name="save_to_phone">Save to Phone</string>
+    <string name="save_instructions">Select an option below for were to save the zip file</string>
 </resources>

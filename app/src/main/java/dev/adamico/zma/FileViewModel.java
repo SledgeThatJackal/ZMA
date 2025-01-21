@@ -1,6 +1,7 @@
 package dev.adamico.zma;
 
 import android.app.Application;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,14 +12,31 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class FileViewModel extends AndroidViewModel {
     private File rootFolder;
@@ -61,6 +79,14 @@ public class FileViewModel extends AndroidViewModel {
         if(!file.delete()) Log.d("FileDelete", "Failed to delete files");
     }
 
+    public void deleteZip(){
+        deleteFile(rootFolder);
+        deleteFile(zipFile);
+
+        rootFolder = null;
+        zipFile = null;
+    }
+
     public File getCurrentFolder(){
         if(barcodeFolders.isEmpty()) return null;
 
@@ -94,13 +120,14 @@ public class FileViewModel extends AndroidViewModel {
     }
 
     private void zipFolders() throws IOException {
-        FileOutputStream fos = new FileOutputStream(zipFile);
-        ZipOutputStream zos = new ZipOutputStream(fos);
+        try(FileOutputStream fos = new FileOutputStream(zipFile);
+            ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-        File[] directories = rootFolder.listFiles(File::isDirectory);
-        if(directories != null){
-            for(File dir: directories){
-                zipContents(dir, zos, dir.getName() + "/");
+            File[] directories = rootFolder.listFiles(File::isDirectory);
+            if(directories != null){
+                for(File dir: directories){
+                    zipContents(dir, zos, dir.getName() + "/");
+                }
             }
         }
     }
@@ -109,19 +136,68 @@ public class FileViewModel extends AndroidViewModel {
         File[] files = folder.listFiles();
         if(files != null){
             for(File file: files) {
-                FileInputStream fis = new FileInputStream(file);
-                ZipEntry zipEntry = new ZipEntry(folderName + file.getName());
+                try(FileInputStream fis = new FileInputStream(file)) {
+                    ZipEntry zipEntry = new ZipEntry(folderName + file.getName());
 
-                zos.putNextEntry(zipEntry);
+                    zos.putNextEntry(zipEntry);
 
-                byte[] bytes = new byte[1024];
-                int length;
-                while((length = fis.read(bytes)) >= 0){
-                    zos.write(bytes, 0, length);
+                    byte[] bytes = new byte[1024];
+                    int length;
+                    while((length = fis.read(bytes)) >= 0){
+                        zos.write(bytes, 0, length);
+                    }
+
+                    zos.closeEntry();
                 }
-
-                zos.closeEntry();
             }
         }
+    }
+
+    public void saveZipLocally(){
+        File targetDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ZMA");
+
+        if(!targetDir.exists()){
+            targetDir.mkdir();
+        }
+
+        File targetFile = new File(targetDir, zipFile.getName());
+
+        try{
+            Files.copy(zipFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            zipFile.delete();
+            deleteFile(rootFolder);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void makeHttpRequest(){
+        OkHttpClient client = new OkHttpClient();
+
+        MultipartBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", zipFile.getName(),
+                        RequestBody.create(zipFile, MediaType.parse("application/zip")))
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://192.168.1.201:8888/api/zip")
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Log.d("Request", call.request().url().toString());
+                }
+            }
+        });
     }
 }

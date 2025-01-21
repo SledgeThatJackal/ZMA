@@ -52,6 +52,8 @@ public class ZipFragment extends Fragment {
 
         createButton.setOnClickListener(v -> {
             fileViewModel.createZip();
+
+            navController.navigate(R.id.action_zipFragment_to_requestFragment);
         });
 
         setupFolderText();

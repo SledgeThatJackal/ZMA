@@ -104,6 +104,7 @@ public class FileViewModel extends AndroidViewModel {
             barcodeFolders.add(barcodeFolder);
 
             setLiveFolders(barcodeFolders);
+            setFolder(barcodeFolder);
         }
 
         return barcodeFolder;

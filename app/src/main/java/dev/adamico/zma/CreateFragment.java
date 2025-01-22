@@ -59,6 +59,8 @@ public class CreateFragment extends Fragment {
     private Button changeButton;
     private LinearLayout containerOptionsLayout;
 
+    private EditText barcodeIdInput;
+
     private FileViewModel fileViewModel;
 
     private MutableLiveData<List<File>> imageFolder;
@@ -80,6 +82,7 @@ public class CreateFragment extends Fragment {
         deleteButton = binding.deleteButton;
         changeButton = binding.changeButton;
         containerOptionsLayout = binding.containerOptionsLayout;
+        barcodeIdInput = binding.barcodeIdInput;
 
         imageRecyclerView = binding.imageRecyclerView;
         imageRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -107,7 +110,15 @@ public class CreateFragment extends Fragment {
         });
 
         inputLink.setOnClickListener(v -> {
-            inputLayout.setVisibility(inputLayout.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            if(inputLayout.getVisibility() == View.GONE){
+                inputLayout.setVisibility(View.VISIBLE);
+                barcodeIdInput.requestFocus();
+
+                InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(barcodeIdInput, InputMethodManager.SHOW_IMPLICIT);
+            } else {
+                inputLayout.setVisibility(View.GONE);
+            }
         });
 
         addImageButton.setOnClickListener(v -> {

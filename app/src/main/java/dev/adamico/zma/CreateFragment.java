@@ -1,13 +1,18 @@
 package dev.adamico.zma;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,12 +22,19 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import dev.adamico.zma.databinding.FragmentCreateBinding;
@@ -38,12 +50,18 @@ public class CreateFragment extends Fragment {
     private LinearLayout inputLayout;
 
     private TextView barcodeValue;
+    private LinearLayout barcodeValueLayout;
     private Button addImageButton;
-    private TextView imageNames;
+    private RecyclerView imageRecyclerView;
 
     private Button doneButton;
+    private Button deleteButton;
+    private Button changeButton;
+    private LinearLayout containerOptionsLayout;
 
     private FileViewModel fileViewModel;
+
+    private MutableLiveData<List<File>> imageFolder;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,9 +74,17 @@ public class CreateFragment extends Fragment {
         instructions = binding.instructions;
         inputLayout = binding.inputLayout;
         barcodeValue = binding.barcodeValue;
+        barcodeValueLayout = binding.barcodeValueLayout;
         addImageButton = binding.addImageButton;
-        imageNames = binding.imageNames;
         doneButton = binding.doneButton;
+        deleteButton = binding.deleteButton;
+        changeButton = binding.changeButton;
+        containerOptionsLayout = binding.containerOptionsLayout;
+
+        imageRecyclerView = binding.imageRecyclerView;
+        imageRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        imageFolder = new MutableLiveData<>();
 
         setupLinks();
 
@@ -71,6 +97,9 @@ public class CreateFragment extends Fragment {
 
         fileViewModel = new ViewModelProvider(requireActivity()).get(FileViewModel.class);
         NavController navController = Navigation.findNavController(this.requireView());
+
+        ImageAdapter adapter = new ImageAdapter(imageFolder, this::removeImage, fileViewModel);
+        imageRecyclerView.setAdapter(adapter);
 
         scannerLink.setOnClickListener(v -> {
             inputLayout.setVisibility(View.GONE);
@@ -89,6 +118,48 @@ public class CreateFragment extends Fragment {
             navController.navigate(R.id.action_createFragment_to_zipFragment);
         });
 
+        deleteButton.setOnClickListener(v -> {
+            fileViewModel.deleteFolder();
+
+            navController.navigate(R.id.action_createFragment_to_zipFragment);
+        });
+
+        changeButton.setOnClickListener(v -> {
+            EditText editText = new EditText(requireContext());
+            editText.setText(fileViewModel.getSelectedFolder().getValue().getName(), TextView.BufferType.EDITABLE);
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            editText.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+
+            barcodeValue.setVisibility(View.GONE);
+            barcodeValueLayout.addView(editText);
+            imageRecyclerView.setVisibility(View.GONE);
+            addImageButton.setVisibility(View.GONE);
+
+            editText.requestFocus();
+
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+
+            ImageButton button = new ImageButton(requireContext());
+            button.setImageResource(R.drawable.ic_check);
+            button.setBackground(null);
+
+            barcodeValueLayout.addView(button);
+
+            button.setOnClickListener(v1 -> {
+                fileViewModel.renameFile(editText.getText().toString());
+                barcodeValue.setVisibility(View.VISIBLE);
+                imageRecyclerView.setVisibility(View.VISIBLE);
+                addImageButton.setVisibility(View.VISIBLE);
+
+                barcodeValueLayout.removeView(editText);
+                barcodeValueLayout.removeView(button);
+
+                imm.hideSoftInputFromWindow(requireView().getWindowToken(), 0);
+            });
+        });
+
         confirmButton.setOnClickListener(v -> {
             String value = barcodeInput.getText().toString();
 
@@ -100,13 +171,12 @@ public class CreateFragment extends Fragment {
             }
         });
 
-        NavBackStackEntry previousEntry = navController.getPreviousBackStackEntry();
-
-        if(fileViewModel.getCurrentFolder() != null) {
-            if (previousEntry == null || !previousEntry.getDestination().getDisplayName().contains("zipFragment")) {
+        fileViewModel.getSelectedFolder().observe(getViewLifecycleOwner(), file -> {
+            if(file != null) {
+                imageFolder.setValue(Arrays.asList(Objects.requireNonNull(file.listFiles())));
                 showFolders();
             }
-        }
+        });
     }
 
     @Override
@@ -126,6 +196,19 @@ public class CreateFragment extends Fragment {
         inputLink.setText(spannableInput);
     }
 
+    public void removeImage(File image){
+        List<File> currentImages = imageFolder.getValue();
+
+        if(currentImages != null){
+            List<File> updatedImages = new ArrayList<>(currentImages);
+            updatedImages.remove(image);
+            imageFolder.setValue(updatedImages);
+
+            fileViewModel.deleteFile(image);
+        }
+    }
+
+
     private void handleInputSubmit(){
         inputLayout.setVisibility(View.GONE);
         barcodeInput.setText("", TextView.BufferType.EDITABLE);
@@ -141,23 +224,14 @@ public class CreateFragment extends Fragment {
     private void showFolders(){
         hideBarcodeButtons();
 
-        File currentFolder = fileViewModel.getCurrentFolder();
+        File currentFolder = fileViewModel.getSelectedFolder().getValue();
 
-        String text = "Barcode: " + currentFolder.getName();
-        barcodeValue.setText(text);
+        String value = "Barcode: " + Objects.requireNonNull(currentFolder).getName();
+        barcodeValue.setText(value);
 
-        File[] files = currentFolder.listFiles();
-        StringBuilder fileNames = new StringBuilder();
-        if(files != null && files.length > 0){
-            for(File file: files){
-                fileNames.append(file.getName()).append("\n");
-            }
-        }
-
-        imageNames.setText(fileNames);
-
-        barcodeValue.setVisibility(View.VISIBLE);
-        imageNames.setVisibility(View.VISIBLE);
+        barcodeValueLayout.setVisibility(View.VISIBLE);
         addImageButton.setVisibility(View.VISIBLE);
+        imageRecyclerView.setVisibility(View.VISIBLE);
+        containerOptionsLayout.setVisibility(View.VISIBLE);
     }
 }

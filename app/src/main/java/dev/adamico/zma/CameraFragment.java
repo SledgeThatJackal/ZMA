@@ -64,7 +64,7 @@ public class CameraFragment extends Fragment {
     }
 
     private void takePhoto(){
-        File currentFolder = fileViewModel.getCurrentFolder();
+        File currentFolder = fileViewModel.getSelectedFolder().getValue();
         File imageLocation = new File(currentFolder, currentFolder.getName() + "_Image_" + System.currentTimeMillis() + ".jpg");
 
         cameraController.takePicture(

@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/createFragment">
+    app:startDestination="@id/zipFragment">
     <fragment
         android:id="@+id/createFragment"
         android:name="dev.adamico.zma.CreateFragment"
-        android:label="@string/create_fragment_label"
+        android:label="Container"
         tools:layout="@layout/fragment_create"
     >
 

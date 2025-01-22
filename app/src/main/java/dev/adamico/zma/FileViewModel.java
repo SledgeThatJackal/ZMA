@@ -7,6 +7,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,10 +46,43 @@ public class FileViewModel extends AndroidViewModel {
     private List<File> barcodeFolders;
     private File zipFile;
 
+    private MutableLiveData<List<File>> folders = new MutableLiveData<>();
+    private MutableLiveData<File> folder = new MutableLiveData<>();
+
     public FileViewModel(@NonNull Application application) {
         super(application);
         rootFolder = createBarcodeFolder("BarcodeFolders");
         barcodeFolders = new ArrayList<>(Arrays.asList(Objects.requireNonNull(rootFolder.listFiles())));
+
+        setLiveFolders(barcodeFolders);
+
+        if(!barcodeFolders.isEmpty()) setFolder(barcodeFolders.get(barcodeFolders.size() - 1));
+    }
+
+    public LiveData<List<File>> getLiveFolders(){
+        return folders;
+    }
+
+    public void setLiveFolders(List<File> folders){
+        this.folders.setValue(folders);
+    }
+
+    public LiveData<File> getSelectedFolder(){
+        return folder;
+    }
+
+    public void setFolder(File selectedFolder){
+        folder.setValue(selectedFolder);
+    }
+
+    public void deleteFolder(){
+        File folderToRemove = folder.getValue();
+
+        if(folderToRemove != null){
+            barcodeFolders.remove(folderToRemove);
+            setLiveFolders(barcodeFolders);
+            deleteFile(folderToRemove);
+        }
     }
 
     public File createBarcodeFolder(String barcodeValue){
@@ -64,9 +100,26 @@ public class FileViewModel extends AndroidViewModel {
             }
         }
 
-        if(rootFolder != null) barcodeFolders.add(barcodeFolder);
+        if(rootFolder != null) {
+            barcodeFolders.add(barcodeFolder);
+
+            setLiveFolders(barcodeFolders);
+        }
 
         return barcodeFolder;
+    }
+
+    public void renameFile(String barcodeValue) {
+        File newFolder = new File(rootFolder, barcodeValue);
+        File currentFolder = folder.getValue();
+
+        if(currentFolder != null && currentFolder.renameTo(newFolder)){
+            barcodeFolders.remove(currentFolder);
+            barcodeFolders.add(newFolder);
+
+            setLiveFolders(barcodeFolders);
+            setFolder(newFolder);
+        }
     }
 
     public void deleteFile(File file){
@@ -85,12 +138,6 @@ public class FileViewModel extends AndroidViewModel {
 
         rootFolder = null;
         zipFile = null;
-    }
-
-    public File getCurrentFolder(){
-        if(barcodeFolders.isEmpty()) return null;
-
-        return barcodeFolders.get(barcodeFolders.size() - 1);
     }
 
     public File getSpecificFolder(int index){

@@ -27,4 +27,7 @@
     <string name="send_to_server">Send to Server</string>
     <string name="save_to_phone">Save to Phone</string>
     <string name="save_instructions">Select an option below for were to save the zip file</string>
+    <string name="delete_container">Delete Container</string>
+    <string name="rename_container">Rename Container</string>
+    <string name="save">Save</string>
 </resources>

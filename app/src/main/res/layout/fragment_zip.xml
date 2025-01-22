@@ -4,14 +4,13 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/foldersView"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
 
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
     />
 
     <Button
@@ -20,7 +19,7 @@
         android:layout_height="wrap_content"
         android:text="@string/add_more"
 
-        app:layout_constraintTop_toBottomOf="@id/foldersView"
+        app:layout_constraintTop_toBottomOf="@id/recyclerView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
     />
